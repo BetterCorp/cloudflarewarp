@@ -1,6 +1,7 @@
 # cloudflareip
 [![codecov](https://codecov.io/gh/vincentinttsh/cloudflareip/branch/master/graph/badge.svg?token=QFGZS5QJSG)](https://codecov.io/gh/vincentinttsh/cloudflareip)
 [![Go Report Card](https://goreportcard.com/badge/github.com/vincentinttsh/cloudflareip)](https://goreportcard.com/report/github.com/vincentinttsh/cloudflareip)
+[![Go](https://github.com/vincentinttsh/cloudflareip/actions/workflows/go.yml/badge.svg)](https://github.com/vincentinttsh/cloudflareip/actions/workflows/go.yml)
 
 If Traefik is behind Cloudflare, it won't be able to get the real IP from the external client by checking the remote IP address.
 
