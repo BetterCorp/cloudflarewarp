@@ -14,7 +14,7 @@ Supported configurations per body
 
 | Setting| Allowed values | Required | Description |
 | :-- | :-- | :-- | :-- |
-| trustip | []string | Yes | IP or IP range to exclude forward IP |
+| trustip | []string | Yes | IP or IP range to trust |
 
 ### Static
 
