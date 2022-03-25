@@ -1,3 +1,3 @@
-module github.com/vincentinttsh/cloudflareip
+module github.com/BetterCorp/cloudflarewarp
 
 go 1.15

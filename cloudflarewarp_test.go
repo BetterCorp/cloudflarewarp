@@ -1,4 +1,4 @@
-package cloudflareip_test
+package cloudflarewarp_test
 
 import (
 	"context"
@@ -6,16 +6,16 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	plugin "github.com/vincentinttsh/cloudflareip"
+	plugin "github.com/BetterCorp/cloudflarewarp"
 )
 
 func TestNew(t *testing.T) {
 	cfg := plugin.CreateConfig()
-	cfg.TrustIP = []string{"103.21.244.0/22"}
+	cfg.TrustIP = []string{"103.21.244.0/22", "172.18.0.1"}
 
 	ctx := context.Background()
 	next := http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {})
-	handler, err := plugin.New(ctx, next, cfg, "cloudflareip")
+	handler, err := plugin.New(ctx, next, cfg, "cloudflarewarp")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -49,6 +49,12 @@ func TestNew(t *testing.T) {
 			cfConnectingIP: "10.0.0.1",
 			expected:       "10.0.0.1",
 		},
+		{
+			remote:         "172.18.0.1",
+			desc:           "forward",
+			cfConnectingIP: "10.0.0.1",
+			expected:       "10.0.0.1",
+		},
 	}
 	for _, test := range testCases {
 		test := test
@@ -71,11 +77,11 @@ func TestNew(t *testing.T) {
 
 func TestError(t *testing.T) {
 	cfg := plugin.CreateConfig()
-	cfg.TrustIP = []string{"103.21.244.0/33"}
+	cfg.TrustIP = []string{"103.21.244.0"}
 
 	ctx := context.Background()
 	next := http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {})
-	_, err := plugin.New(ctx, next, cfg, "cloudflareip")
+	_, err := plugin.New(ctx, next, cfg, "cloudflarewarp")
 	if err == nil {
 		t.Fatalf("expected error, got none")
 	}

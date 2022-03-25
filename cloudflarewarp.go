@@ -1,14 +1,18 @@
-package cloudflareip
+package cloudflarewarp
 
 import (
 	"context"
+	"encoding/json"
 	"net"
 	"net/http"
 )
 
 const (
 	xRealIP        = "X-Real-IP"
-	cfConnectingIP = "Cf-Connecting-IP"
+	xForwardFor    = "X-Forwarded-For"
+	xForwardProto  = "X-Forwarded-Proto"
+	cfConnectingIP = "CF-Connecting-IP"
+	cfVisitor      = "CF-Visitor"
 )
 
 // Config the plugin configuration.
@@ -28,6 +32,11 @@ type RealIPOverWriter struct {
 	next    http.Handler
 	name    string
 	TrustIP []*net.IPNet
+}
+
+// CFVisitorHeader definition for the header value
+type CFVisitorHeader struct {
+	Scheme string `json:"scheme"`
 }
 
 // New created a new plugin.
@@ -52,6 +61,12 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 func (r *RealIPOverWriter) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	if r.trust(req.RemoteAddr) {
 		req.Header.Set(xRealIP, req.Header.Get(cfConnectingIP))
+		req.Header.Set(xForwardFor, req.Header.Get(cfConnectingIP))
+		if req.Header.Get(cfVisitor) != "" {
+			var cfVisitorValue CFVisitorHeader
+			json.Unmarshal([]byte(req.Header.Get(cfVisitor)), &cfVisitorValue)
+			req.Header.Set(xForwardProto, cfVisitorValue.Scheme)
+		}
 	}
 	r.next.ServeHTTP(rw, req)
 }
