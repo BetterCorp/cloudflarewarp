@@ -23,37 +23,65 @@ func TestNew(t *testing.T) {
 		remote         string
 		desc           string
 		cfConnectingIP string
+		cfVisitor      string
 		expected       string
+		expectedScheme string
 	}{
+		{
+			remote:         "103.21.244.23",
+			desc:           "blank scheme",
+			cfConnectingIP: "10.0.0.1",
+			cfVisitor:      "",
+			expected:       "10.0.0.1",
+			expectedScheme: "",
+		},
+		{
+			remote:         "103.21.244.23",
+			desc:           "https scheme",
+			cfConnectingIP: "10.0.0.1",
+			cfVisitor:      "{\"scheme\":\"https\"}",
+			expected:       "10.0.0.1",
+			expectedScheme: "https",
+		},
 		{
 			remote:         "10.0.1.20",
 			desc:           "not trust",
 			cfConnectingIP: "127.0.0.2",
+			cfVisitor:      "",
 			expected:       "",
+			expectedScheme: "",
 		},
 		{
 			remote:         "10.0.2",
 			desc:           "wrong IP format",
 			cfConnectingIP: "10.0.0.1",
+			cfVisitor:      "",
 			expected:       "",
+			expectedScheme: "",
 		},
 		{
 			remote:         "10.0.300.20",
 			desc:           "wrong IP address",
 			cfConnectingIP: "10.0.0.1",
+			cfVisitor:      "",
 			expected:       "",
+			expectedScheme: "",
 		},
 		{
 			remote:         "103.21.244.23",
 			desc:           "forward",
 			cfConnectingIP: "10.0.0.1",
+			cfVisitor:      "",
 			expected:       "10.0.0.1",
+			expectedScheme: "",
 		},
 		{
 			remote:         "172.18.0.1",
 			desc:           "forward",
 			cfConnectingIP: "10.0.0.1",
+			cfVisitor:      "",
 			expected:       "10.0.0.1",
+			expectedScheme: "",
 		},
 	}
 	for _, test := range testCases {
@@ -67,10 +95,13 @@ func TestNew(t *testing.T) {
 			}
 			req.RemoteAddr = test.remote + ":36001"
 			req.Header.Set("Cf-Connecting-IP", test.cfConnectingIP)
+			req.Header.Set("Cf-Visitor", test.cfVisitor)
 
 			handler.ServeHTTP(recorder, req)
 
 			assertHeader(t, req, "X-Real-Ip", test.expected)
+			assertHeader(t, req, "X-Forwarded-For", test.expected)
+			assertHeader(t, req, "X-Forwarded-Proto", test.expectedScheme)
 		})
 	}
 }
@@ -86,6 +117,7 @@ func TestError(t *testing.T) {
 		t.Fatalf("expected error, got none")
 	}
 }
+
 func assertHeader(t *testing.T, req *http.Request, key, expected string) {
 	t.Helper()
 
