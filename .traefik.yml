@@ -1,9 +1,9 @@
 
-displayName: ReaL IP from Cloudflare
+displayName: Real IP from Cloudflare WARP
 type: middleware
 import: github.com/BetterCorp/cloudflarewarp
 
-summary: get real IP from Cloudflare 
+summary: get real IP and proto from Cloudflare WARP
 
 testData:
   trustip:
