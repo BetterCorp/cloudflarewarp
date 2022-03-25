@@ -11,7 +11,7 @@ import (
 
 func TestNew(t *testing.T) {
 	cfg := plugin.CreateConfig()
-	cfg.TrustIP = []string{"103.21.244.0/22", "172.18.0.1"}
+	cfg.TrustIP = []string{"103.21.244.0/22", "172.18.0.1/32"}
 
 	ctx := context.Background()
 	next := http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {})
