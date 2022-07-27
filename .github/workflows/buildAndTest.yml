@@ -48,7 +48,7 @@ jobs:
         GOPATH: ${{ github.workspace }}/go
 
     - name: Test Code
-      run: go test -race -coverprofile=coverage.txt -covermode=atomic ./...
+      run: make test
 
     - uses: codecov/codecov-action@v2
 
