@@ -29,11 +29,11 @@ jobs:
       uses: actions/upload-artifact@v2
       with: 
         name: logs-fail
-        path: logs-fail
+        path: .test-instance/logs-fail
 
     - name: Upload log artifacts (success)
       if: always()
       uses: actions/upload-artifact@v2
       with: 
         name: logs-success
-        path: logs-success
+        path: .test-instance/logs-success
