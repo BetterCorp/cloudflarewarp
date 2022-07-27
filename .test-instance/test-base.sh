@@ -19,6 +19,7 @@ if [ "${2}" = "stack" ]; then
   sleep 5s;
 else
   docker-compose up -d;
+  sleep 5s;
 fi
 
 curl -H "CF-Connecting-IP:187.2.2.2" -H "CF-Visitor:{\"scheme\":\"https\"}" http://localhost:4008/ >> ./logs/output.log;
@@ -27,6 +28,7 @@ if [ "${2}" = "stack" ] ; then
   docker stack rm test-instance;
   sleep 5s;
 else
+  sleep 5s;
   docker-compose down;
 fi
 
