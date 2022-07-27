@@ -1,5 +1,6 @@
 rm CFIPs.txt;
 curl https://www.cloudflare.com/ips-v4 >> CFIPs.txt;
+echo "" >> CFIPs.txt;
 curl https://www.cloudflare.com/ips-v6 >> CFIPs.txt;
 echo "" >> CFIPs.txt;
 
