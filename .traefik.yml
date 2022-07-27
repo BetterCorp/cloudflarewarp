@@ -7,7 +7,6 @@ summary: get real IP and proto from Cloudflare WARP
 
 testData:
   trustip:
-    - 172.18.0.1/32
     - 103.21.244.0/22
     - 103.22.200.0/22
     - 103.31.4.0/22
