@@ -11,7 +11,7 @@ import (
 
 func TestNew(t *testing.T) {
 	cfg := plugin.CreateConfig()
-	cfg.TrustIP = []string{"103.21.244.0/22", "172.18.0.1/32"}
+	cfg.TrustIP = []string{"103.21.244.0/22", "172.18.0.1/32", "2405:b500::/32"}
 
 	ctx := context.Background()
 	next := http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {})
@@ -20,6 +20,7 @@ func TestNew(t *testing.T) {
 		t.Fatal(err)
 	}
 	testCases := []struct {
+		expect500      bool
 		remote         string
 		desc           string
 		cfConnectingIP string
@@ -34,6 +35,14 @@ func TestNew(t *testing.T) {
 			cfVisitor:      "",
 			expected:       "10.0.0.1",
 			expectedScheme: "",
+		},
+		{
+			remote:         "103.21.244.23",
+			desc:           "https scheme",
+			cfConnectingIP: "10.0.0.1,9.9.9.9",
+			cfVisitor:      "{\"scheme\":\"https\"}",
+			expected:       "10.0.0.1",
+			expectedScheme: "https",
 		},
 		{
 			remote:         "103.21.244.23",
@@ -58,6 +67,7 @@ func TestNew(t *testing.T) {
 			cfVisitor:      "",
 			expected:       "",
 			expectedScheme: "",
+			expect500:      true,
 		},
 		{
 			remote:         "10.0.300.20",
@@ -66,6 +76,7 @@ func TestNew(t *testing.T) {
 			cfVisitor:      "",
 			expected:       "",
 			expectedScheme: "",
+			expect500:      true,
 		},
 		{
 			remote:         "103.21.244.23",
@@ -94,12 +105,21 @@ func TestNew(t *testing.T) {
 				t.Fatal(err)
 			}
 			req.RemoteAddr = test.remote + ":36001"
+			req.Header.Set("X-Real-Ip", test.remote)
 			req.Header.Set("Cf-Connecting-IP", test.cfConnectingIP)
 			req.Header.Set("Cf-Visitor", test.cfVisitor)
 
 			handler.ServeHTTP(recorder, req)
 
-			assertHeader(t, req, "X-Real-Ip", test.expected)
+			if recorder.Result().StatusCode == 500 {
+				if test.expect500 == true {
+					return
+				}
+				t.Errorf("invalid response: 500")
+				return
+			}
+
+			assertHeader(t, req, "X-Real-Ip", test.remote)
 			assertHeader(t, req, "X-Forwarded-For", test.expected)
 			assertHeader(t, req, "X-Forwarded-Proto", test.expectedScheme)
 		})
@@ -122,6 +142,6 @@ func assertHeader(t *testing.T, req *http.Request, key, expected string) {
 	t.Helper()
 
 	if req.Header.Get(key) != expected {
-		t.Errorf("invalid header value: %s", req.Header.Get(key))
+		t.Errorf("invalid header(%s) value: %s", key, req.Header.Get(key))
 	}
 }

@@ -1,0 +1,44 @@
+version: "3.8"
+
+networks:
+  proxy:
+    internal: true
+
+services:
+  whoami:
+    image: traefik/whoami
+    depends_on:
+      - traefik
+    networks:
+      - proxy
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    deploy:
+      replicas: 1
+      labels:
+        - "traefik.http.services.test-instance-traefik-whoami.loadbalancer.server.port=80"
+        - "traefik.http.services.test-instance-traefik-whoami.loadbalancer.server.scheme=http"
+        - "traefik.http.services.test-instance-traefik-whoami.loadbalancer.passhostheader=true"
+
+        - "traefik.http.routers.test-instance-traefik-whoami.service=test-instance-traefik-whoami"
+        - "traefik.http.routers.test-instance-traefik-whoami.middlewares=cloudflarewarp@file"
+        - "traefik.http.routers.test-instance-traefik-whoami.rule=Method(`GET`)"
+        - "traefik.http.routers.test-instance-traefik-whoami.entrypoints=web"
+
+        - "traefik.enable=true"
+
+  traefik:
+    image: traefik:2.8
+    networks:
+      - proxy
+    ports:
+      - 4008:80
+    volumes:
+      - ./traefik.toml:/etc/traefik/traefik.toml
+      - ./logs:/var/logs/traefik
+      - ./tempconfig:/etc/traefik/mconfig
+      - ../:/plugins-local/src/github.com/BetterCorp/cloudflarewarp:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /etc/localtime:/etc/localtime:ro
+    deploy:
+      replicas: 1
