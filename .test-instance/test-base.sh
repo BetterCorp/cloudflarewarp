@@ -14,7 +14,7 @@ cp "./config/${1}.toml" ./tempconfig/config.toml
 chmod -R 7777 ./logs;
 chmod -R 7777 ./tempconfig;
 
-if [ ${2} = "stack" ]; then
+if [ "${2}" = "stack" ]; then
   docker stack deploy -c docker-stack.yml test-instance;
   sleep 5s;
 else
@@ -23,7 +23,7 @@ fi
 
 curl -H "CF-Connecting-IP:187.2.2.2" -H "CF-Visitor:{\"scheme\":\"https\"}" http://localhost:4008/ >> ./logs/output.log;
 
-if [ ${2} = "stack" ] ; then
+if [ "${2}" = "stack" ] ; then
   docker stack rm test-instance;
   sleep 5s;
 else
