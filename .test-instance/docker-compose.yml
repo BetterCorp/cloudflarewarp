@@ -14,18 +14,17 @@ services:
       - proxy
     volumes:
       - /etc/localtime:/etc/localtime:ro
-    deploy:
-      labels:
-        - "traefik.http.services.test-instance-traefik-whoami.loadbalancer.server.port=80"
-        - "traefik.http.services.test-instance-traefik-whoami.loadbalancer.server.scheme=http"
-        - "traefik.http.services.test-instance-traefik-whoami.loadbalancer.passhostheader=true"
+    labels:
+      - "traefik.http.services.test-instance-traefik-whoami.loadbalancer.server.port=80"
+      - "traefik.http.services.test-instance-traefik-whoami.loadbalancer.server.scheme=http"
+      - "traefik.http.services.test-instance-traefik-whoami.loadbalancer.passhostheader=true"
 
-        - "traefik.http.routers.test-instance-traefik-whoami.service=test-instance-traefik-whoami"
-        - "traefik.http.routers.test-instance-traefik-whoami.middlewares=cloudflarewarp@file"
-        - "traefik.http.routers.test-instance-traefik-whoami.rule=Method(`GET`)"
-        - "traefik.http.routers.test-instance-traefik-whoami.entrypoints=web"
+      - "traefik.http.routers.test-instance-traefik-whoami.service=test-instance-traefik-whoami"
+      - "traefik.http.routers.test-instance-traefik-whoami.middlewares=cloudflarewarp@file"
+      - "traefik.http.routers.test-instance-traefik-whoami.rule=Method(`GET`)"
+      - "traefik.http.routers.test-instance-traefik-whoami.entrypoints=web"
 
-        - "traefik.enable=true"
+      - "traefik.enable=true"
 
   traefik:
     image: traefik:2.8
@@ -35,7 +34,7 @@ services:
     ports:
       - 4008:80
     volumes:
-      - ./traefik.toml:/etc/traefik/traefik.toml
+      - ./traefik-compose.toml:/etc/traefik/traefik.toml
       - ./logs:/var/logs/traefik
       - ./tempconfig:/etc/traefik/mconfig
       - ../:/plugins-local/src/github.com/BetterCorp/cloudflarewarp:ro
