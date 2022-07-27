@@ -23,3 +23,17 @@ jobs:
 
     - name: Test With Traefik
       run: cd .test-instance; bash test.sh
+
+    - name: Upload log artifacts (fail)
+      run: always
+      uses: actions/upload-artifact@v2
+      with: 
+        name: logs-fail
+        path: logs-fail
+
+    - name: Upload log artifacts (success)
+      run: always
+      uses: actions/upload-artifact@v2
+      with: 
+        name: logs-success
+        path: logs-success
