@@ -1,6 +1,11 @@
 rm -rf ./logs-success;
 rm -rf ./logs-fail;
 
+if [ "${1}" = "stack" ] ; then
+  docker swarm init;
+  sleep 5s;
+fi
+
 sleep 1s;
 
 bash test-base.sh success "${1}";
