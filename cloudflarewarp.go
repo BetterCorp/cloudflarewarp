@@ -5,10 +5,12 @@ import (
 	"encoding/json"
 	"net"
 	"net/http"
+	"strings"
 )
 
 const (
 	xRealIP        = "X-Real-IP"
+	xCfTrusted     = "X-Is-Trusted"
 	xForwardFor    = "X-Forwarded-For"
 	xForwardProto  = "X-Forwarded-Proto"
 	cfConnectingIP = "CF-Connecting-IP"
@@ -17,7 +19,12 @@ const (
 
 // Config the plugin configuration.
 type Config struct {
-	TrustIP []string `json:"trustip,omitempty" toml:"trustip,omitempty" yaml:"trustip,omitempty"`
+	TrustIP []string `json:"trustip,omitempty"`
+}
+type TrustResult struct {
+	isError  bool
+	trusted  bool
+	directIP string
 }
 
 // CreateConfig creates the default plugin configuration.
@@ -59,28 +66,62 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 }
 
 func (r *RealIPOverWriter) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
-	if r.trust(req.RemoteAddr) {
-		req.Header.Set(xRealIP, req.Header.Get(cfConnectingIP))
-		req.Header.Set(xForwardFor, req.Header.Get(cfConnectingIP))
+	req.Header.Del(xCfTrusted)
+	req.Header.Del(xForwardFor)
+	req.Header.Del(xRealIP)
+	req.Header.Del(xForwardProto)
+
+	trustResult := r.trust(req.RemoteAddr)
+	if trustResult.directIP == "" || trustResult.isError {
+		http.Error(rw, "Unknown source", 500)
+		return
+	}
+	if trustResult.trusted {
+		req.Header.Set(xCfTrusted, "yes")
+		req.Header.Set(xForwardFor, strings.Split(req.Header.Get(cfConnectingIP), ",")[0])
 		if req.Header.Get(cfVisitor) != "" {
 			var cfVisitorValue CFVisitorHeader
 			json.Unmarshal([]byte(req.Header.Get(cfVisitor)), &cfVisitorValue)
 			req.Header.Set(xForwardProto, cfVisitorValue.Scheme)
 		}
+	} else {
+		req.Header.Set(xCfTrusted, "no")
+		req.Header.Del(cfVisitor)
+		req.Header.Del(cfConnectingIP)
 	}
+	req.Header.Set(xRealIP, trustResult.directIP)
 	r.next.ServeHTTP(rw, req)
 }
 
-func (r *RealIPOverWriter) trust(s string) bool {
+func (r *RealIPOverWriter) trust(s string) *TrustResult {
 	temp, _, err := net.SplitHostPort(s)
 	if err != nil {
-		return false
-	}
-	ip := net.ParseIP(temp)
-	for _, network := range r.TrustIP {
-		if network.Contains(ip) {
-			return true
+		return &TrustResult{
+			isError:  true,
+			trusted:  false,
+			directIP: "",
 		}
 	}
-	return false
+	ip := net.ParseIP(temp)
+	if ip == nil {
+		return &TrustResult{
+			isError:  true,
+			trusted:  false,
+			directIP: "",
+		}
+	}
+	for _, network := range r.TrustIP {
+		if network.Contains(ip) {
+			return &TrustResult{
+				isError:  false,
+				trusted:  true,
+				directIP: ip.String(),
+			}
+		}
+	}
+	return &TrustResult{
+		isError:  false,
+		trusted:  false,
+		directIP: ip.String(),
+	}
 }

@@ -1,0 +1,39 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+
+    - name: Test Code
+      run: go test -race -coverprofile=coverage.txt -covermode=atomic ./...
+
+    - uses: codecov/codecov-action@v2
+
+    - name: Test With Traefik
+      run: cd .test-instance; bash test.sh
+
+    - name: Upload log artifacts (fail)
+      if: always()
+      uses: actions/upload-artifact@v2
+      with: 
+        name: logs-fail
+        path: .test-instance/logs-fail
+
+    - name: Upload log artifacts (success)
+      if: always()
+      uses: actions/upload-artifact@v2
+      with: 
+        name: logs-success
+        path: .test-instance/logs-success

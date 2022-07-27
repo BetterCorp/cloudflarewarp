@@ -1,0 +1,44 @@
+[global]
+  checkNewVersion = false
+  sendAnonymousUsage = false
+
+[entryPoints]
+  [entryPoints.web]
+    address = ":80"
+
+[providers.docker]
+  endpoint = "unix:///var/run/docker.sock"
+  swarmMode = false
+
+  exposedByDefault = false
+  network = "test-instance_proxy"
+  watch = true
+  swarmModeRefreshSeconds = 5
+
+[traefikLog]
+  filePath = "/var/logs/traefik/traefik.log"
+  format   = "json"
+
+[log]
+  level = "DEBUG"
+  filePath = "/var/logs/traefik/debug.log"
+  format = "json"
+
+[accessLog]
+  filePath = "/var/logs/traefik/access.log"
+  bufferingSize = 0
+  format = "json"
+  [accessLog.filters]
+    statusCodes = ["100-800"]
+    retryAttempts = true
+    minDuration = "0ms"
+
+  [accessLog.fields]
+    defaultMode = "keep"
+
+[providers.file]
+  directory="/etc/traefik/mconfig/"
+  watch="true"
+
+[experimental.localPlugins.cloudflarewarp]
+  moduleName = "github.com/BetterCorp/cloudflarewarp"

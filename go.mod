@@ -1,3 +1,3 @@
 module github.com/BetterCorp/cloudflarewarp
 
-go 1.15
+go 1.17
