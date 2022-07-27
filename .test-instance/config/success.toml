@@ -6,7 +6,7 @@
         [http.middlewares.cloudflarewarp.plugin.cloudflarewarp]
           trustip=[
             "10.0.0.0/8", 
-            "172.18.0.1/32",
+            "172.0.0.0/8",
             "103.21.244.0/22",
             "103.22.200.0/22",
             "103.31.4.0/22",

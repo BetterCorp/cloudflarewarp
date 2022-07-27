@@ -23,6 +23,7 @@ else
 fi
 
 curl -H "CF-Connecting-IP:187.2.2.2" -H "CF-Visitor:{\"scheme\":\"https\"}" http://localhost:4008/ >> ./logs/output.log;
+cat ./logs/output.log;
 
 if [ "${2}" = "stack" ] ; then
   docker stack rm test-instance;
