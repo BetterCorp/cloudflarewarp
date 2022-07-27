@@ -6,7 +6,7 @@ networks:
 
 services:
   whoami:
-    image: traefik/whoami
+    image: traefik/whoami:v1.8.1
     depends_on:
       - traefik
     networks:
