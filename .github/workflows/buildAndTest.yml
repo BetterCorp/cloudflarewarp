@@ -16,6 +16,9 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v2
 
+    - name: Build Cloudflare IPs
+      run: bash updateCFIps.sh
+
     - name: Test Code
       run: go test -race -coverprofile=coverage.txt -covermode=atomic ./...
 

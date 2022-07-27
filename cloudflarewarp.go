@@ -6,6 +6,7 @@ import (
 	"net"
 	"net/http"
 	"strings"
+	"github.com/BetterCorp/cloudflarewarp/ips"
 )
 
 const (
@@ -20,6 +21,7 @@ const (
 // Config the plugin configuration.
 type Config struct {
 	TrustIP []string `json:"trustip,omitempty"`
+	DisableDefaultCFIPs bool
 }
 type TrustResult struct {
 	isError  bool
@@ -31,6 +33,7 @@ type TrustResult struct {
 func CreateConfig() *Config {
 	return &Config{
 		TrustIP: []string{},
+		DisableDefaultCFIPs: false,
 	}
 }
 
@@ -60,6 +63,17 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 		}
 
 		ipOverWriter.TrustIP = append(ipOverWriter.TrustIP, trustip)
+	}
+
+	if config.DisableDefaultCFIPs != true {
+		for _, v := range ips.CFIPs() {
+			_, trustip, err := net.ParseCIDR(v)
+			if err != nil {
+				return nil, err
+			}
+	
+			ipOverWriter.TrustIP = append(ipOverWriter.TrustIP, trustip)
+		}
 	}
 
 	return ipOverWriter, nil
