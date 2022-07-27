@@ -18,7 +18,7 @@ if [ "${2}" = "stack" ]; then
   docker stack deploy -c docker-stack.yml test-instance;
   sleep 5s;
 else
-  docker-compose run -d --rm whoami;
+  docker-compose up -d;
 fi
 
 curl -H "CF-Connecting-IP:187.2.2.2" -H "CF-Visitor:{\"scheme\":\"https\"}" http://localhost:4008/ >> ./logs/output.log;
