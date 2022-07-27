@@ -25,14 +25,14 @@ jobs:
       run: cd .test-instance; bash test.sh
 
     - name: Upload log artifacts (fail)
-      run: always
+      if: always()
       uses: actions/upload-artifact@v2
       with: 
         name: logs-fail
         path: logs-fail
 
     - name: Upload log artifacts (success)
-      run: always
+      if: always()
       uses: actions/upload-artifact@v2
       with: 
         name: logs-success
