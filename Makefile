@@ -11,7 +11,7 @@ test_actual:
 	cd .test-instance; bash test.sh
 
 test:
-	go test -race -coverprofile=coverage.txt -covermode=atomic ./*_test.go
+	go test -race -coverprofile=coverage.txt -covermode=atomic ./*/*_test.go
 
 yaegi_test:
 	bash $(go env GOPATH)/bin/yaegi test .
