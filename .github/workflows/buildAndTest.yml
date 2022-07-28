@@ -45,14 +45,14 @@ jobs:
     - name: Setup GOPATH
       run: go env -w GOPATH=${{ github.workspace }}/go
 
-    #- name: Format code
-    #  run: gofmt -s -w ./src/*
-
-    - name: Test Code
-      run: make test
+    - name: Format code
+      run: gofmt -l -d ./src/*/*
 
     - name: Lint Code
       run: make lint
+
+    - name: Test Code
+      run: make test
 
     - name: Run tests with Yaegi
       run: make yaegi_test
