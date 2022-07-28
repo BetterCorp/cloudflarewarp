@@ -1,5 +1,5 @@
-SUCCESS_CONFIG_FILE="./logs-success/output.log"
-FAIL_CONFIG_FILE="./logs-fail/output.log"
+SUCCESS_CONFIG_FILE="./logs-success-${1}/output.log"
+FAIL_CONFIG_FILE="./logs-fail-${1}/output.log"
 
 echo "RUNNING TESTS";
 

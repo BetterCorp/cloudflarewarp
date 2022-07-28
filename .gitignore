@@ -44,3 +44,4 @@
 .test-instance/logs/*.log
 .test-instance/logs-*
 .test-instance/tempconfig/
+coverage.txt

@@ -11,22 +11,52 @@ docker pull traefik:2.8;
 
 sleep 1s;
 
-bash test-base.sh success "${1}";
+rm -rf ./logs-success-toml
+
+bash test-base.sh success toml "${1}";
 
 sleep 1s;
 
-mv ./logs ./logs-success;
-mv ./tempconfig ./logs-success/config;
+mv ./logs ./logs-success-toml;
+mv ./tempconfig ./logs-success-toml/config;
 
 sleep 1s;
 
-bash test-base.sh fail "${1}";
+rm -rf ./logs-fail-toml
+
+bash test-base.sh fail toml "${1}";
 
 sleep 1s;
 
-mv ./logs ./logs-fail;
-mv ./tempconfig ./logs-fail/config;
+mv ./logs ./logs-fail-toml;
+mv ./tempconfig ./logs-fail-toml/config;
 
 sleep 1s;
 
-bash ./test-verify.sh;
+rm -rf ./logs-success-yml
+
+bash ./test-verify.sh toml;
+
+sleep 1s;
+
+bash test-base.sh success yml "${1}";
+
+sleep 1s;
+
+mv ./logs ./logs-success-yml;
+mv ./tempconfig ./logs-success-yml/config;
+
+sleep 1s;
+
+rm -rf ./logs-fail-yml
+
+bash test-base.sh fail yml "${1}";
+
+sleep 1s;
+
+mv ./logs ./logs-fail-yml;
+mv ./tempconfig ./logs-fail-yml/config;
+
+sleep 1s;
+
+bash ./test-verify.sh yml;
