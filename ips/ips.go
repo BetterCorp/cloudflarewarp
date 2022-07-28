@@ -1,3 +1,4 @@
+// Package ips contains a list of current cloud flare IP ranges
 package ips
 
 // CFIPs is the CloudFlare Server IP list (this is checked on build).
