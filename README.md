@@ -17,24 +17,40 @@ Supported configurations per body
 
 | Setting| Allowed values | Required | Description |
 | :-- | :-- | :-- | :-- |
-| trustip | []string | Yes | IP or IP range to trust |
+| trustip | []string | No | IP or IP range to trust |
+| disableDefault | bool | Yes | Disable the built in list of CloudFlare IPs/Servers |
 
-### Static
+### Notes re CloudFlare
+
+One thing included in this plugin is we bundle the CloudFlare server IPs with it, so you do not have to define them manually.  
+However on the flip-side, if you want to, you can just disable them by setting `disableDefault` to `true`.  
+
+If you do not define `trustip` and `disableDefault`, it doesn't seem to load the plugin, so just set `disableDefault` to `false` and you are able to use the default IP list.  
+
+### Enable the plugin
 
 ```yaml
-pilot:
-  token: xxxx
 
 experimental:
   plugins:
-    traefik-cf-warp:
+    cloudflarewarp:
       modulename: github.com/BetterCorp/cloudflarewarp
-      version: v1.0.0
-```
-### Dynamic configuration
+      version: v2.1.0
+```  
+
+
+### Plugin configuration
 
 ```yaml
-http:
+http:  
+  middlewares:
+    cloudflarewarp:
+      plugin:
+        cloudflarewarp:
+          disableDefault: false
+          trustip:
+            - "1.1.1.1/24"
+
   routers:
     my-router:
       rule: Path(`/whoami`)
@@ -49,13 +65,6 @@ http:
       loadBalancer:
         servers:
           - url: http://127.0.0.1:5000
-  
-  middlewares:
-    cloudflarewarp:
-      plugin:
-        cloudflarewarp:
-          trustip:
-            - "1.1.1.1/24"
 ```
 
 Code forked and modified from : [https://github.com/vincentinttsh/cloudflareip](https://github.com/vincentinttsh/cloudflareip)

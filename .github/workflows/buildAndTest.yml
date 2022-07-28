@@ -2,38 +2,74 @@ name: Build and Test
 
 on:
   push:
-    branches: [ master, develop ]
+    branches:
+      - "*"
   pull_request:
-    branches: [ master ]
+    branches:
+      - "master"
+      - "develop"
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
+    env:
+      GO_VERSION: 1.17
+      GOLANGCI_LINT_VERSION: v1.46.2
+      YAEGI_VERSION: v0.13.0
+      GOPATH: ${{ github.workspace }}/go
+      #CGO_ENABLED: 0
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}/go/src/github.com/${{ github.repository }}
+
     steps:
-    - uses: actions/checkout@v2
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ env.GO_VERSION }}
 
-    - name: Set up Go
-      uses: actions/setup-go@v2
+      - uses: actions/checkout@v2
+        with:
+          path: go/src/github.com/${{ github.repository }}
+          fetch-depth: 0
 
-    - name: Test Code
-      run: go test -race -coverprofile=coverage.txt -covermode=atomic ./...
+      - name: Build Cloudflare IPs
+        run: bash updateCFIps.sh
 
-    - uses: codecov/codecov-action@v2
+      - name: Setup GOPATH
+        run: go env -w GOPATH=${{ github.workspace }}/go
 
-    - name: Test With Traefik
-      run: cd .test-instance; bash test.sh
+      # https://golangci-lint.run/usage/install#other-ci
+      - name: Install golangci-lint ${{ env.GOLANGCI_LINT_VERSION }}
+        run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ${{ github.workspace }}/go/bin ${GOLANGCI_LINT_VERSION}
+        # working-directory: ${{ github.workspace }}
 
-    - name: Upload log artifacts (fail)
-      if: always()
-      uses: actions/upload-artifact@v2
-      with: 
-        name: logs-fail
-        path: .test-instance/logs-fail
+      - name: Install Yaegi ${{ env.YAEGI_VERSION }}
+        run: curl -sfL https://raw.githubusercontent.com/traefik/yaegi/master/install.sh | bash -s -- -b ${{ github.workspace }}/go/bin ${YAEGI_VERSION}
+        # working-directory: ${{ github.workspace }}
 
-    - name: Upload log artifacts (success)
-      if: always()
-      uses: actions/upload-artifact@v2
-      with: 
-        name: logs-success
-        path: .test-instance/logs-success
+      - name: Format code
+        run: gofmt -l -d ./ips/* ; gofmt -l -d ./*.go
+
+      - name: Lint Code
+        run: ${{ github.workspace }}/go/bin/golangci-lint run
+
+      - name: Test Code
+        run: go test -race -coverprofile=coverage.txt -covermode=atomic ./*_test.go
+
+      - name: Run tests with Yaegi
+        run: ${{ github.workspace }}/go/bin/yaegi test .
+
+      - uses: codecov/codecov-action@v2
+
+      - name: Test With Traefik
+        run: cd test; bash test.sh
+
+      - name: Upload log artifacts
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: logs
+          if-no-files-found: error
+          path: ${{ github.workspace }}/go/src/github.com/${{ github.repository }}/test/logs-*
+          retention-days: 1

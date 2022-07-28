@@ -1,7 +1,7 @@
-SUCCESS_CONFIG_FILE="./logs-success/output.log"
-FAIL_CONFIG_FILE="./logs-fail/output.log"
+SUCCESS_CONFIG_FILE="./logs-success-${1}/output.log"
+FAIL_CONFIG_FILE="./logs-fail-${1}/output.log"
 
-echo "RUNNING TESTS";
+echo "RUNNING TESTS FOR ${1}";
 
 if ! grep -q "X-Is-Trusted: yes" $SUCCESS_CONFIG_FILE; then
   echo "X-Is-Trusted header was not added and parsed"

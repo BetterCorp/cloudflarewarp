@@ -1,0 +1,9 @@
+
+[http]
+  [http.middlewares]
+    [http.middlewares.cloudflarewarp]
+      [http.middlewares.cloudflarewarp.plugin]
+        [http.middlewares.cloudflarewarp.plugin.cloudflarewarp]
+          trustip=[
+          ]
+          
