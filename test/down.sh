@@ -1,1 +1,0 @@
-docker stack remove test-instance-traefik
