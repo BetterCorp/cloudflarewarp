@@ -21,6 +21,7 @@ func TestNew(t *testing.T) {
 	}
 	testCases := []struct {
 		expect500      bool
+		trusted        bool
 		remote         string
 		desc           string
 		cfConnectingIP string
@@ -35,14 +36,7 @@ func TestNew(t *testing.T) {
 			cfVisitor:      "",
 			expected:       "10.0.0.1",
 			expectedScheme: "",
-		},
-		{
-			remote:         "103.21.244.23",
-			desc:           "https scheme",
-			cfConnectingIP: "10.0.0.1,9.9.9.9",
-			cfVisitor:      "{\"scheme\":\"https\"}",
-			expected:       "10.0.0.1",
-			expectedScheme: "https",
+			trusted:        true,
 		},
 		{
 			remote:         "103.21.244.23",
@@ -51,6 +45,7 @@ func TestNew(t *testing.T) {
 			cfVisitor:      "{\"scheme\":\"https\"}",
 			expected:       "10.0.0.1",
 			expectedScheme: "https",
+			trusted:        true,
 		},
 		{
 			remote:         "10.0.1.20",
@@ -59,6 +54,7 @@ func TestNew(t *testing.T) {
 			cfVisitor:      "",
 			expected:       "",
 			expectedScheme: "",
+			trusted:        false,
 		},
 		{
 			remote:         "10.0.2",
@@ -68,6 +64,7 @@ func TestNew(t *testing.T) {
 			expected:       "",
 			expectedScheme: "",
 			expect500:      true,
+			trusted:        false,
 		},
 		{
 			remote:         "10.0.300.20",
@@ -77,6 +74,7 @@ func TestNew(t *testing.T) {
 			expected:       "",
 			expectedScheme: "",
 			expect500:      true,
+			trusted:        false,
 		},
 		{
 			remote:         "103.21.244.23",
@@ -85,6 +83,7 @@ func TestNew(t *testing.T) {
 			cfVisitor:      "",
 			expected:       "10.0.0.1",
 			expectedScheme: "",
+			trusted:        true,
 		},
 		{
 			remote:         "172.18.0.1",
@@ -93,6 +92,7 @@ func TestNew(t *testing.T) {
 			cfVisitor:      "",
 			expected:       "10.0.0.1",
 			expectedScheme: "",
+			trusted:        true,
 		},
 	}
 	for _, test := range testCases {
@@ -119,7 +119,13 @@ func TestNew(t *testing.T) {
 				return
 			}
 
-			assertHeader(t, req, "X-Real-Ip", test.remote)
+			if test.trusted {
+				assertHeader(t, req, "X-Is-Trusted", "yes")
+				assertHeader(t, req, "X-Real-Ip", test.expected)
+			} else {
+				assertHeader(t, req, "X-Is-Trusted", "no")
+				assertHeader(t, req, "X-Real-Ip", test.remote)
+			}
 			assertHeader(t, req, "X-Forwarded-For", test.expected)
 			assertHeader(t, req, "X-Forwarded-Proto", test.expectedScheme)
 		})
