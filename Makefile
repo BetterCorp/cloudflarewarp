@@ -14,4 +14,4 @@ test:
 	go test -race -coverprofile=coverage.txt -covermode=atomic ./*_test.go
 
 yaegi_test:
-	yaegi test .
+	bash $(go env GOPATH)/bin/yaegi test .

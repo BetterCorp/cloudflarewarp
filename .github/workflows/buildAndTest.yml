@@ -17,17 +17,20 @@ jobs:
       GOLANGCI_LINT_VERSION: v1.46.2
       YAEGI_VERSION: v0.13.0
       CGO_ENABLED: 0
-    #defaults:
-    #  run:
-    #    working-directory: ${{ github.workspace }}/go/src/github.com/${{ github.repository }}
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}/go/src/github.com/${{ github.repository }}
 
     steps:
-    - uses: actions/checkout@v2
-
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
         go-version: ${{ env.GO_VERSION }}
+
+    - uses: actions/checkout@v2
+      with:
+        path: go/src/github.com/${{ github.repository }}
+        fetch-depth: 0
 
     - name: Build Cloudflare IPs
       run: bash updateCFIps.sh
@@ -40,15 +43,18 @@ jobs:
       run: curl -sfL https://raw.githubusercontent.com/traefik/yaegi/master/install.sh | bash -s -- -b $(go env GOPATH)/bin ${YAEGI_VERSION}
 
     - name: Setup GOPATH
-      run: go env -w GOPATH=${{ github.workspace }}
+      run: go env -w GOPATH=${{ github.workspace }}/go
+
+    - name: Test Code
+      run: make test
+
+    - name: Lint Code
+      run: make lint
 
     - name: Run tests with Yaegi
       run: make yaegi_test
       env:
-        GOPATH: ${{ github.workspace }}
-
-    - name: Test Code
-      run: make test
+        GOPATH: ${{ github.workspace }}/go
 
     - uses: codecov/codecov-action@v2
 

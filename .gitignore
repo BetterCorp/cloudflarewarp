@@ -45,3 +45,4 @@
 .test-instance/logs-*
 .test-instance/tempconfig/
 coverage.txt
+go

@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/BetterCorp/cloudflarewarp/ips"
+	"github.com/BetterCorp/cloudflarewarp/src/ips"
 )
 
 const (
@@ -21,7 +21,7 @@ const (
 
 // Config the plugin configuration.
 type Config struct {
-	TrustIP             []string //`json:"trustip,omitempty"`
+	TrustIP             []string `json:"trustip,omitempty"`
 	DisableDefaultCFIPs bool
 }
 type TrustResult struct {
