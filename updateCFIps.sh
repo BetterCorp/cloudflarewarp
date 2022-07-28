@@ -26,7 +26,7 @@ echo "}" >>$OUTPUT_GO_CONFIG
 
 rm CFIPs.txt
 
-if [ "${1}" != "pc" ]; then
+if [ "${1}" == "pc" ]; then
   echo "Run on pre-commit hook."
   rm $OUTPUT_GO_CONFIG_OLD
   if cmp --silent -- "$OUTPUT_GO_CONFIG" "$OUTPUT_GO_CONFIG_OLD"; then
@@ -35,7 +35,7 @@ if [ "${1}" != "pc" ]; then
     echo "Cloud flare have changed their IPs, adding changes to commit."
     touch ./.commit
   fi
-  
+
   exit
 fi
 
