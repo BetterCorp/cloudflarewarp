@@ -16,7 +16,7 @@ jobs:
       GO_VERSION: 1.17
       GOLANGCI_LINT_VERSION: v1.46.2
       YAEGI_VERSION: v0.13.0
-      CGO_ENABLED: 0
+      #CGO_ENABLED: 0
     defaults:
       run:
         working-directory: ${{ github.workspace }}/go/src/github.com/${{ github.repository }}
