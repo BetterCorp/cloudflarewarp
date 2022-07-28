@@ -1,4 +1,4 @@
-// ips for CloudFlare.
+// Package ips for CloudFlare.
 package ips
 
 // CFIPs is the CloudFlare Server IP list (this is checked on build).

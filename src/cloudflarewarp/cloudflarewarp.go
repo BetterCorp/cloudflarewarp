@@ -1,4 +1,4 @@
-// cloudflarewarp Traefik Plugin.
+// Package cloudflarewarp Traefik Plugin.
 package cloudflarewarp
 
 import (
