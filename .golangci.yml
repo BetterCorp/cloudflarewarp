@@ -57,7 +57,9 @@ issues:
   exclude-use-default: false
   max-per-linter: 0
   max-same-issues: 0
-  exclude: []
+  exclude: 
+    - ST1000
+    - EXC0011 # https://github.com/golangci/golangci-lint/issues/980
   exclude-rules:
     - path: (.+)_test.go
       linters:
