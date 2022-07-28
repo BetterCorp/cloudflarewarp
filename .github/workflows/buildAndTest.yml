@@ -71,9 +71,5 @@ jobs:
         with:
           name: logs
           if-no-files-found: error
-          path: |
-            test/logs-fail-toml
-            test/logs-success-toml
-            test/logs-fail-yml
-            test/logs-success-yml
+          path: ${{ github.workspace }}/go/src/github.com/${{ github.repository }}/test/logs-*
           retention-days: 1
