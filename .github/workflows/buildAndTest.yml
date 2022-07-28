@@ -49,15 +49,19 @@ jobs:
 
     - name: Format code
       run: gofmt -l -d ./src/*/*
+      env:
+        GOPATH: ${{ github.workspace }}/go
 
     - name: Lint Code
-      run: make lint
+      run: bash "${{ github.workspace }}/go/bin/golangci-lint" run
 
     - name: Test Code
-      run: make test
+      run: go test -race -coverprofile=coverage.txt -covermode=atomic ./src/*/*_test.go
+      env:
+        GOPATH: ${{ github.workspace }}/go
 
     - name: Run tests with Yaegi
-      run: make yaegi_test
+      run: bash "${{ github.workspace }}/go/bin/yaegi" test .
       env:
         GOPATH: ${{ github.workspace }}/go
 
