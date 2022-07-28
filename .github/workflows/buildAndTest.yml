@@ -45,6 +45,9 @@ jobs:
     - name: Setup GOPATH
       run: go env -w GOPATH=${{ github.workspace }}/go
 
+    - name: Format code
+      run: gofmt -s -w ./src/*
+
     - name: Test Code
       run: make test
 
