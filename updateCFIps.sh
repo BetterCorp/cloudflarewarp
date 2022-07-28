@@ -13,7 +13,7 @@ echo "package ips" >> $OUTPUT_GO_CONFIG;
 echo "" >> $OUTPUT_GO_CONFIG;
 echo "// CFIPs is the CloudFlare Server IP list (this is checked on build)." >> $OUTPUT_GO_CONFIG;
 echo "func CFIPs() []string {" >> $OUTPUT_GO_CONFIG;
-echo "	return []string {" >> $OUTPUT_GO_CONFIG;
+echo "	return []string{" >> $OUTPUT_GO_CONFIG;
 
 cat CFIPs.txt | while read line || [[ -n $line ]];
 do
