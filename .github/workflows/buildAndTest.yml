@@ -53,7 +53,7 @@ jobs:
         GOPATH: ${{ github.workspace }}/go
 
     - name: Lint Code
-      run: bash "${{ github.workspace }}/go/bin/golangci-lint" run
+      run: ${{ github.workspace }}/go/bin/golangci-lint run
 
     - name: Test Code
       run: go test -race -coverprofile=coverage.txt -covermode=atomic ./src/*/*_test.go
@@ -61,7 +61,7 @@ jobs:
         GOPATH: ${{ github.workspace }}/go
 
     - name: Run tests with Yaegi
-      run: bash "${{ github.workspace }}/go/bin/yaegi" test .
+      run: ${{ github.workspace }}/go/bin/yaegi test .
       env:
         GOPATH: ${{ github.workspace }}/go
 
