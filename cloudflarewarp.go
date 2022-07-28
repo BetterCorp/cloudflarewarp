@@ -6,13 +6,12 @@ import (
 	"encoding/json"
 	"net"
 	"net/http"
-	"strings"
 
 	"github.com/BetterCorp/cloudflarewarp/ips"
 )
 
 const (
-	xRealIP        = "X-Real-IP"
+	xRealIP        = "X-Real-Ip"
 	xCfTrusted     = "X-Is-Trusted"
 	xForwardFor    = "X-Forwarded-For"
 	xForwardProto  = "X-Forwarded-Proto"
@@ -23,7 +22,7 @@ const (
 // Config the plugin configuration.
 type Config struct {
 	TrustIP             []string `json:"trustip,omitempty"`
-	DisableDefaultCFIPs bool
+	DisableDefaultCFIPs bool     `json:"disableDefault,omitempty"`
 }
 
 // TrustResult for Trust IP test result.
@@ -60,13 +59,15 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 		name: name,
 	}
 
-	for _, v := range config.TrustIP {
-		_, trustip, err := net.ParseCIDR(v)
-		if err != nil {
-			return nil, err
-		}
+	if config.TrustIP != nil {
+		for _, v := range config.TrustIP {
+			_, trustip, err := net.ParseCIDR(v)
+			if err != nil {
+				return nil, err
+			}
 
-		ipOverWriter.TrustIP = append(ipOverWriter.TrustIP, trustip)
+			ipOverWriter.TrustIP = append(ipOverWriter.TrustIP, trustip)
+		}
 	}
 
 	if !config.DisableDefaultCFIPs {
@@ -84,11 +85,6 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 }
 
 func (r *RealIPOverWriter) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
-	req.Header.Del(xCfTrusted)
-	req.Header.Del(xForwardFor)
-	req.Header.Del(xRealIP)
-	req.Header.Del(xForwardProto)
-
 	trustResult := r.trust(req.RemoteAddr)
 	if trustResult.directIP == "" || trustResult.isError {
 		http.Error(rw, "Unknown source", 500)
@@ -101,20 +97,20 @@ func (r *RealIPOverWriter) ServeHTTP(rw http.ResponseWriter, req *http.Request) 
 				req.Header.Set(xCfTrusted, "danger")
 				req.Header.Del(cfVisitor)
 				req.Header.Del(cfConnectingIP)
-				req.Header.Del(xRealIP)
 				r.next.ServeHTTP(rw, req)
 				return
 			}
 			req.Header.Set(xForwardProto, cfVisitorValue.Scheme)
 		}
 		req.Header.Set(xCfTrusted, "yes")
-		req.Header.Set(xForwardFor, strings.Split(req.Header.Get(cfConnectingIP), ",")[0])
+		req.Header.Set(xForwardFor, req.Header.Get(cfConnectingIP))
+		req.Header.Set(xRealIP, req.Header.Get(cfConnectingIP))
 	} else {
 		req.Header.Set(xCfTrusted, "no")
+		req.Header.Set(xRealIP, trustResult.directIP)
 		req.Header.Del(cfVisitor)
 		req.Header.Del(cfConnectingIP)
 	}
-	req.Header.Set(xRealIP, trustResult.directIP)
 	r.next.ServeHTTP(rw, req)
 }
 

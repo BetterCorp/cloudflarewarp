@@ -3,4 +3,4 @@ http:
     cloudflarewarp:
       plugin:
         cloudflarewarp:
-          trustip:
+          disableDefault: false

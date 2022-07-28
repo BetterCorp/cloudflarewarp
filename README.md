@@ -17,24 +17,33 @@ Supported configurations per body
 
 | Setting| Allowed values | Required | Description |
 | :-- | :-- | :-- | :-- |
-| trustip | []string | Yes | IP or IP range to trust |
+| trustip | []string | No | IP or IP range to trust |
+| disableDefault | bool | No | Disable the built in list of CloudFlare IPs/Servers |
 
-### Static
+### Enable the plugin
 
 ```yaml
-pilot:
-  token: xxxx
 
 experimental:
   plugins:
-    traefik-cf-warp:
+    cloudflarewarp:
       modulename: github.com/BetterCorp/cloudflarewarp
-      version: v1.0.0
-```
-### Dynamic configuration
+      version: v2.1.0
+```  
+
+
+### Plugin configuration
 
 ```yaml
-http:
+http:  
+  middlewares:
+    cloudflarewarp:
+      plugin:
+        cloudflarewarp:
+          disableDefault: false
+          trustip:
+            - "1.1.1.1/24"
+
   routers:
     my-router:
       rule: Path(`/whoami`)
@@ -49,13 +58,6 @@ http:
       loadBalancer:
         servers:
           - url: http://127.0.0.1:5000
-  
-  middlewares:
-    cloudflarewarp:
-      plugin:
-        cloudflarewarp:
-          trustip:
-            - "1.1.1.1/24"
 ```
 
 Code forked and modified from : [https://github.com/vincentinttsh/cloudflareip](https://github.com/vincentinttsh/cloudflareip)

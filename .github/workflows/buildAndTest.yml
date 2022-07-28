@@ -65,16 +65,11 @@ jobs:
     - name: Test With Traefik
       run: cd test; bash test.sh
 
-    - name: Upload log artifacts (fail)
+    - name: Upload log artifacts
       if: always()
       uses: actions/upload-artifact@v2
       with: 
-        name: logs-fail
-        path: test/logs-fail
-
-    - name: Upload log artifacts (success)
-      if: always()
-      uses: actions/upload-artifact@v2
-      with: 
-        name: logs-success
-        path: test/logs-success
+        name: logs
+        if-no-files-found: error
+        path: test/logs-*
+        retention-days: 1
