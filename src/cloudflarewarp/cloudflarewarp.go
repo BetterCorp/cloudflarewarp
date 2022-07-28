@@ -24,6 +24,8 @@ type Config struct {
 	TrustIP             []string `json:"trustip,omitempty"`
 	DisableDefaultCFIPs bool
 }
+
+// Trust IP test result.
 type TrustResult struct {
 	isError  bool
 	trusted  bool
@@ -45,7 +47,7 @@ type RealIPOverWriter struct {
 	TrustIP []*net.IPNet
 }
 
-// CFVisitorHeader definition for the header value
+// CFVisitorHeader definition for the header value.
 type CFVisitorHeader struct {
 	Scheme string `json:"scheme"`
 }
@@ -66,7 +68,7 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 		ipOverWriter.TrustIP = append(ipOverWriter.TrustIP, trustip)
 	}
 
-	if config.DisableDefaultCFIPs != true {
+	if !config.DisableDefaultCFIPs {
 		for _, v := range ips.CFIPs() {
 			_, trustip, err := net.ParseCIDR(v)
 			if err != nil {
@@ -92,13 +94,20 @@ func (r *RealIPOverWriter) ServeHTTP(rw http.ResponseWriter, req *http.Request) 
 		return
 	}
 	if trustResult.trusted {
-		req.Header.Set(xCfTrusted, "yes")
-		req.Header.Set(xForwardFor, strings.Split(req.Header.Get(cfConnectingIP), ",")[0])
 		if req.Header.Get(cfVisitor) != "" {
 			var cfVisitorValue CFVisitorHeader
-			json.Unmarshal([]byte(req.Header.Get(cfVisitor)), &cfVisitorValue)
+			if err := json.Unmarshal([]byte(req.Header.Get(cfVisitor)), &cfVisitorValue); err != nil {
+				req.Header.Set(xCfTrusted, "danger")
+				req.Header.Del(cfVisitor)
+				req.Header.Del(cfConnectingIP)
+				req.Header.Del(xRealIP)
+				r.next.ServeHTTP(rw, req)
+				return
+			}
 			req.Header.Set(xForwardProto, cfVisitorValue.Scheme)
 		}
+		req.Header.Set(xCfTrusted, "yes")
+		req.Header.Set(xForwardFor, strings.Split(req.Header.Get(cfConnectingIP), ",")[0])
 	} else {
 		req.Header.Set(xCfTrusted, "no")
 		req.Header.Del(cfVisitor)

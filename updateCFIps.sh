@@ -10,6 +10,7 @@ rm $OUTPUT_GO_CONFIG;
 
 echo "package ips" >> $OUTPUT_GO_CONFIG;
 echo "" >> $OUTPUT_GO_CONFIG;
+echo "// CloudFlare Server IP list." >> $OUTPUT_GO_CONFIG;
 echo "func CFIPs() []string {" >> $OUTPUT_GO_CONFIG;
 echo "	return []string {" >> $OUTPUT_GO_CONFIG;
 
