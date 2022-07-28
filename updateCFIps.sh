@@ -28,7 +28,6 @@ rm CFIPs.txt
 
 if [ "${1}" == "pc" ]; then
   echo "Run on pre-commit hook."
-  rm $OUTPUT_GO_CONFIG_OLD
   if cmp --silent -- "$OUTPUT_GO_CONFIG" "$OUTPUT_GO_CONFIG_OLD"; then
     echo "No changes, nothing to worry about"
   else
@@ -36,6 +35,7 @@ if [ "${1}" == "pc" ]; then
     touch ./.commit
   fi
 
+  rm $OUTPUT_GO_CONFIG_OLD
   exit
 fi
 
