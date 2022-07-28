@@ -4,7 +4,7 @@ echo "" >> CFIPs.txt;
 curl https://www.cloudflare.com/ips-v6 >> CFIPs.txt;
 echo "" >> CFIPs.txt;
 
-OUTPUT_GO_CONFIG="./src/ips/ips.go"
+OUTPUT_GO_CONFIG="./ips/ips.go"
 OUTPUT_GO_CONFIG_OLD="./ips-temp.go"
 
 mv $OUTPUT_GO_CONFIG $OUTPUT_GO_CONFIG_OLD;
