@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/BetterCorp/cloudflarewarp/src/ips"
+	"github.com/BetterCorp/cloudflarewarp/ips"
 )
 
 const (

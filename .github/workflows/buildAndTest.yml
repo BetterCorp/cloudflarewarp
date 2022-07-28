@@ -16,6 +16,7 @@ jobs:
       GO_VERSION: 1.17
       GOLANGCI_LINT_VERSION: v1.46.2
       YAEGI_VERSION: v0.13.0
+      GOPATH: ${{ github.workspace }}/go
       #CGO_ENABLED: 0
     defaults:
       run:
@@ -35,6 +36,9 @@ jobs:
     - name: Build Cloudflare IPs
       run: bash updateCFIps.sh
 
+    - name: Setup GOPATH
+      run: go env -w GOPATH=${{ github.workspace }}/go
+
     # https://golangci-lint.run/usage/install#other-ci
     - name: Install golangci-lint ${{ env.GOLANGCI_LINT_VERSION }}
       run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ${{ github.workspace }}/go/bin ${GOLANGCI_LINT_VERSION}
@@ -44,26 +48,17 @@ jobs:
       run: curl -sfL https://raw.githubusercontent.com/traefik/yaegi/master/install.sh | bash -s -- -b ${{ github.workspace }}/go/bin ${YAEGI_VERSION}
       # working-directory: ${{ github.workspace }}
 
-    - name: Setup GOPATH
-      run: go env -w GOPATH=${{ github.workspace }}/go
-
     - name: Format code
-      run: gofmt -l -d ./src/*/*
-      env:
-        GOPATH: ${{ github.workspace }}/go
+      run: gofmt -l -d ./ips/* ; gofmt -l -d ./*.go
 
     - name: Lint Code
       run: ${{ github.workspace }}/go/bin/golangci-lint run
 
     - name: Test Code
-      run: go test -race -coverprofile=coverage.txt -covermode=atomic ./src/*/*_test.go
-      env:
-        GOPATH: ${{ github.workspace }}/go
+      run: go test -race -coverprofile=coverage.txt -covermode=atomic ./*_test.go
 
     - name: Run tests with Yaegi
       run: ${{ github.workspace }}/go/bin/yaegi test .
-      env:
-        GOPATH: ${{ github.workspace }}/go
 
     - uses: codecov/codecov-action@v2
 
