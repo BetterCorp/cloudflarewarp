@@ -4,13 +4,14 @@ echo "" >> CFIPs.txt;
 curl https://www.cloudflare.com/ips-v6 >> CFIPs.txt;
 echo "" >> CFIPs.txt;
 
-OUTPUT_GO_CONFIG="ips/ips.go"
+OUTPUT_GO_CONFIG="./src/ips/ips.go"
+OUTPUT_GO_CONFIG_OLD="./ips-temp.go"
 
-rm $OUTPUT_GO_CONFIG;
+mv $OUTPUT_GO_CONFIG $OUTPUT_GO_CONFIG_OLD;
 
 echo "package ips" >> $OUTPUT_GO_CONFIG;
 echo "" >> $OUTPUT_GO_CONFIG;
-echo "// CloudFlare Server IP list." >> $OUTPUT_GO_CONFIG;
+echo "// CFIPs is the CloudFlare Server IP list (this is checked on build)." >> $OUTPUT_GO_CONFIG;
 echo "func CFIPs() []string {" >> $OUTPUT_GO_CONFIG;
 echo "	return []string {" >> $OUTPUT_GO_CONFIG;
 
@@ -24,3 +25,18 @@ echo "	}" >> $OUTPUT_GO_CONFIG;
 echo "}" >> $OUTPUT_GO_CONFIG;
 
 rm CFIPs.txt;
+
+if [ "${1}" != "ci" ]; then
+  echo "Not run on CI, exit ok";
+  rm $OUTPUT_GO_CONFIG_OLD;
+  exit;
+fi
+
+if cmp --silent -- "$OUTPUT_GO_CONFIG" "$OUTPUT_GO_CONFIG_OLD"; then
+  echo "No changes to Cloud Flare IP list";
+  rm $OUTPUT_GO_CONFIG_OLD;
+else
+  echo "Cloud flare have changed their IPs, re-run updateCFIps.sh and commit the changes!"
+  rm $OUTPUT_GO_CONFIG_OLD;
+  exit 6;
+fi

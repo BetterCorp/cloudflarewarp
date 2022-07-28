@@ -8,7 +8,7 @@ lint:
 	golangci-lint run
 
 test_actual: 
-	cd .test-instance; bash test.sh
+	cd test; bash test.sh
 
 test:
 	go test -race -coverprofile=coverage.txt -covermode=atomic ./src/*/*_test.go

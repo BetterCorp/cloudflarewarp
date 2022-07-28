@@ -25,7 +25,7 @@ type Config struct {
 	DisableDefaultCFIPs bool
 }
 
-// Trust IP test result.
+// TrustResult for Trust IP test result.
 type TrustResult struct {
 	isError  bool
 	trusted  bool
