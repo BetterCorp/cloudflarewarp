@@ -33,8 +33,9 @@ if [ "${1}" != "pc" ]; then
     echo "No changes, nothing to worry about"
   else
     echo "Cloud flare have changed their IPs, adding changes to commit."
-    touch ./.commit;
+    touch ./.commit
   fi
+  
   exit
 fi
 
