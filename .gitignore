@@ -41,6 +41,8 @@
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,go
 
-.test-instance/logs/*.log
-.test-instance/logs-*/*.log
-.test-instance/tempconfig/
+test/logs
+test/logs-*
+test/tempconfig/
+coverage.txt
+go
