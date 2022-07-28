@@ -37,12 +37,12 @@ jobs:
 
     # https://golangci-lint.run/usage/install#other-ci
     - name: Install golangci-lint ${{ env.GOLANGCI_LINT_VERSION }}
-      run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ./bin ${GOLANGCI_LINT_VERSION}
-      working-directory: ${{ github.workspace }}
+      run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ${{ github.workspace }}/go/bin ${GOLANGCI_LINT_VERSION}
+      # working-directory: ${{ github.workspace }}
 
     - name: Install Yaegi ${{ env.YAEGI_VERSION }}
-      run: curl -sfL https://raw.githubusercontent.com/traefik/yaegi/master/install.sh | bash -s -- -b ./bin ${YAEGI_VERSION}
-      working-directory: ${{ github.workspace }}
+      run: curl -sfL https://raw.githubusercontent.com/traefik/yaegi/master/install.sh | bash -s -- -b ${{ github.workspace }}/go/bin ${YAEGI_VERSION}
+      # working-directory: ${{ github.workspace }}
 
     - name: Setup GOPATH
       run: go env -w GOPATH=${{ github.workspace }}/go
