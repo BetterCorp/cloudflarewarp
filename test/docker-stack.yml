@@ -28,7 +28,7 @@ services:
         - "traefik.enable=true"
 
   traefik:
-    image: traefik:2.8
+    image: traefik:2.8.1
     networks:
       - proxy
     ports:
