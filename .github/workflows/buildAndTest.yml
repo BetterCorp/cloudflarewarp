@@ -56,6 +56,8 @@ jobs:
 
       - name: Test Code
         run: go test -race -coverprofile=coverage.txt -covermode=atomic ./*_test.go
+        env:
+          CGO_ENABLED: 1
 
       - name: Run tests with Yaegi
         run: ${{ github.workspace }}/go/bin/yaegi test .
