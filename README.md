@@ -69,3 +69,16 @@ http:
         servers:
           - url: http://127.0.0.1:5000
 ```
+
+# Testing  
+
+[https://github.com/BetterCorp/cloudflarewarp/tree/master/test](https://github.com/BetterCorp/cloudflarewarp/tree/master/test)  
+  
+We have written the following tests in this repo:   
+ - golang linting  
+ - yaegi tests (validate configuration matches what Traefik expects)  
+ - General GO code coverage  
+ - Virtual implementation tests (spin up traefik with yml/toml tests to make sure the plugin actually works)
+ - Live implementation tests (spin up traefik with the plugin definition as it would be for you, and run the same tests again)  
+
+These tests allow us to make sure the plugin is always functional with Traefik and Traefik version updates.  
