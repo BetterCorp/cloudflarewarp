@@ -35,7 +35,7 @@ experimental:
   plugins:
     cloudflarewarp:
       modulename: github.com/BetterCorp/cloudflarewarp
-      version: v2.1.0
+      version: v1.3.0
 ```  
 
 

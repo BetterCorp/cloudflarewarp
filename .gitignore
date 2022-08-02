@@ -46,3 +46,4 @@ test/logs-*
 test/tempconfig/
 coverage.txt
 go
+.dccache
