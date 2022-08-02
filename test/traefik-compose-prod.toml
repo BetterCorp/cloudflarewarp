@@ -40,6 +40,8 @@
   directory="/etc/traefik/mconfig/"
   watch="true"
 
-[experimental.plugins.cloudflarewarp]
-  moduleName = "github.com/BetterCorp/cloudflarewarp"
-  version = "v2.1.0"
+[experimental]
+  [experimental.plugins]
+    [experimental.plugins.cloudflarewarp]
+      moduleName = "github.com/BetterCorp/cloudflarewarp"
+      version = "v2.1.0"

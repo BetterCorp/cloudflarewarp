@@ -1,3 +1,5 @@
+#!/bin/sh
+
 echo "";
 echo "";
 echo "*** STARTING TEST FOR : ${1}-${2}-${3}";
@@ -22,20 +24,41 @@ chmod -R 7777 ./tempconfig;
 
 if [ "${3}" = "stack" ]; then
   docker stack deploy -c docker-stack.yml test-instance;
-  sleep 5s;
+  sleep 1s;
 else
   docker-compose up -d;
-  sleep 5s;
+  sleep 1s;
 fi
+
+iterations=0
+while ! grep -q "Starting TCP Server" "./logs/debug.log" && [ $iterations -lt 30 ]; do
+  sleep 1s
+  echo "Waiting for Traefik to be ready [${iterations}s/30]"
+  let iterations++
+done
+
+iterations=0
+while ! grep -q "Provider connection established with docker" "./logs/debug.log" && [ $iterations -lt 30 ]; do
+  sleep 1s
+  echo "Waiting for Traefik to connect to docker [${iterations}s/30]"
+  let iterations++
+done
+
+iterations=0
+while ! grep -q "Propagating new UP status" "./logs/debug.log" && [ $iterations -lt 30 ]; do
+  sleep 1s
+  echo "Waiting for Traefik to UP the service [${iterations}s/30]"
+  let iterations++
+done
 
 curl -H "CF-Connecting-IP:187.2.2.2" -H "CF-Visitor:{\"scheme\":\"https\"}" http://localhost:4008/ >> ./logs/output.log;
 cat ./logs/output.log;
 
 if [ "${3}" = "stack" ] ; then
   docker stack rm test-instance;
-  sleep 5s;
+  sleep 1s;
 else
-  sleep 5s;
+  sleep 1s;
   docker-compose down;
 fi
 
