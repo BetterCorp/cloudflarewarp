@@ -9,7 +9,7 @@ if ! grep -q "X-Is-Trusted: yes" $SUCCESS_CONFIG_FILE; then
   echo "X-Is-Trusted header was not added and parsed"
   exit 5
 fi
-if ! grep -q "X-Forwarded-For: 187.2.2.2" $SUCCESS_CONFIG_FILE; then
+if ! grep -q "X-Forwarded-For: 187.2.2.3" $SUCCESS_CONFIG_FILE; then
   echo "IP header not defined"
   exit 5
 fi

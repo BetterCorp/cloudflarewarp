@@ -55,7 +55,7 @@ while ! grep -q "Propagating new UP status" "./logs/debug.log" && [ $iterations 
   let iterations++
 done
 
-curl -H "CF-Connecting-IP:187.2.2.2" -H "CF-Visitor:{\"scheme\":\"https\"}" http://localhost:4008/ >>./logs/output.log
+curl -H "CF-Connecting-IP:187.2.2.3" -H "CF-Visitor:{\"scheme\":\"https\"}" http://localhost:4008/ >>./logs/output.log
 cat ./logs/output.log
 
 if [ "${3}" = "stack" ]; then
