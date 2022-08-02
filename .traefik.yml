@@ -1,8 +1,9 @@
-displayName: Real IP from Cloudflare WARP
+displayName: Real IP from Cloudflare Proxy/Tunnel
 type: middleware
 import: github.com/BetterCorp/cloudflarewarp
+iconPath: .assets/icon.png
 
-summary: get real IP and proto from Cloudflare WARP
+summary: get real IP and proto from Cloudflare Proxy/Tunnel
 
 testData:
   disableDefault: false

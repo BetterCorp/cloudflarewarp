@@ -1,4 +1,4 @@
-# cloudflarewarp
+# Real IP from Cloudflare Proxy/Tunnel
 [![Code Coverage](https://codecov.io/gh/BetterCorp/cloudflarewarp/branch/master/graph/badge.svg?token=QFGZS5QJSG)](https://codecov.io/gh/BetterCorp/cloudflarewarp)
 [![Code Analysis](https://github.com/BetterCorp/cloudflarewarp/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/BetterCorp/cloudflarewarp/actions/workflows/codeql-analysis.yml)
 [![Codacy Security Scan](https://github.com/BetterCorp/cloudflarewarp/actions/workflows/codacy-analysis.yml/badge.svg)](https://github.com/BetterCorp/cloudflarewarp/actions/workflows/codacy-analysis.yml)
@@ -6,11 +6,11 @@
 [![Build and Test Source](https://github.com/BetterCorp/cloudflarewarp/actions/workflows/buildAndTest.yml/badge.svg)](https://github.com/BetterCorp/cloudflarewarp/actions/workflows/buildAndTest.yml)
 [![Integration Test](https://github.com/BetterCorp/cloudflarewarp/actions/workflows/prodTest.yml/badge.svg)](https://github.com/BetterCorp/cloudflarewarp/actions/workflows/prodTest.yml)
 
-If Traefik is behind a Cloudflare WARP tunnel, it won't be able to get the real IP from the external client as well as other information.
+If Traefik is behind a Cloudflare Proxy/Tunnel, it won't be able to get the real IP from the external client as well as other information.
 
 This plugin solves this issue by overwriting the X-Real-IP and X-Forwarded-For with an IP from the CF-Connecting-IP header.  
 The real IP will be the Cf-Connecting-IP if request is come from cloudflare ( truest ip in configuration file).  
-The plugin also writes the CF-Visitor scheme to the X-Forwarded-Proto. (This fixes an infinite redirect issue for wordpress when using CF[443]->WARP->Traefik[80]->WP[80])  
+The plugin also writes the CF-Visitor scheme to the X-Forwarded-Proto. (This fixes an infinite redirect issue for wordpress when using CF[443]->PROXY/TUNNEL->Traefik[80]->WP[80])  
 
 ## Configuration  
 
