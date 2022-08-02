@@ -27,25 +27,25 @@ if [ ! "${1}" = "stack" ]; then
   cp docker-compose-prod.yml docker-compose.yml
 fi
 
-rm -rf ./logs-prod-success-toml
+rm -rf ./logs-success-toml
 
 bash test-base.sh success toml "${1}" $TEST_IP
 
 sleep 1s
 
-mv ./logs ./logs-prod-success-toml
-mv ./tempconfig ./logs-prod-success-toml/config
+mv ./logs ./logs-success-toml
+mv ./tempconfig ./logs-success-toml/config
 
 sleep 1s
 
-rm -rf ./logs-prod-fail-toml
+rm -rf ./logs-fail-toml
 
 bash test-base.sh fail toml "${1}" $TEST_IP
 
 sleep 1s
 
-mv ./logs ./logs-prod-fail-toml
-mv ./tempconfig ./logs-prod-fail-toml/config
+mv ./logs ./logs-fail-toml
+mv ./tempconfig ./logs-fail-toml/config
 
 sleep 1s
 
