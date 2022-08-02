@@ -1,0 +1,27 @@
+name: Build and Test
+
+on:
+  push:
+    tags:        
+      - 'v*' 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Test With Traefik
+        run: cd test; bash test-prod.sh
+
+      - name: Upload log artifacts
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: logs
+          if-no-files-found: error
+          path: ${{ github.workspace }}/test/logs-*
+          retention-days: 1
