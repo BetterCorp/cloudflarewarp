@@ -1,3 +1,7 @@
+#!/bin/sh
+
+TEST_IP="187.2.2.1"
+
 rm -rf ./logs-success
 rm -rf ./logs-fail
 
@@ -13,7 +17,7 @@ sleep 1s
 
 rm -rf ./logs-success-toml
 
-bash test-base.sh success toml "${1}"
+bash test-base.sh success toml "${1}" $TEST_IP
 
 sleep 1s
 
@@ -24,7 +28,7 @@ sleep 1s
 
 rm -rf ./logs-fail-toml
 
-bash test-base.sh fail toml "${1}"
+bash test-base.sh fail toml "${1}" $TEST_IP
 
 sleep 1s
 
@@ -35,11 +39,11 @@ sleep 1s
 
 rm -rf ./logs-success-yml
 
-bash ./test-verify.sh toml
+bash ./test-verify.sh toml $TEST_IP
 
 sleep 1s
 
-bash test-base.sh success yml "${1}"
+bash test-base.sh success yml "${1}" $TEST_IP
 
 sleep 1s
 
@@ -50,7 +54,7 @@ sleep 1s
 
 rm -rf ./logs-fail-yml
 
-bash test-base.sh fail yml "${1}"
+bash test-base.sh fail yml "${1}" $TEST_IP
 
 sleep 1s
 
@@ -59,4 +63,4 @@ mv ./tempconfig ./logs-fail-yml/config
 
 sleep 1s
 
-bash ./test-verify.sh yml
+bash ./test-verify.sh yml $TEST_IP
