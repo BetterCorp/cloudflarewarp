@@ -22,6 +22,8 @@ cp "./config/${1}.${2}" "./tempconfig/config.${2}"
 chmod -R 7777 ./logs;
 chmod -R 7777 ./tempconfig;
 
+sleep 2s;
+
 if [ "${3}" = "stack" ]; then
   docker stack deploy -c docker-stack.yml test-instance;
   sleep 1s;
@@ -52,6 +54,7 @@ while ! grep -q "Propagating new UP status" "./logs/debug.log" && [ $iterations 
 done
 
 curl -H "CF-Connecting-IP:${4}" -H "CF-Visitor:{\"scheme\":\"https\"}" http://localhost:4008/ >> ./logs/output.log;
+echo "Headers:\nCF-Connecting-IP:${4}\nCF-Visitor:{\"scheme\":\"https\"}" >> ./logs/request.log
 cat ./logs/output.log;
 
 if [ "${3}" = "stack" ] ; then
