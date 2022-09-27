@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+  "strconv"
 
 	plugin "github.com/BetterCorp/cloudflarewarp"
 )
@@ -21,9 +22,7 @@ func TestNew(t *testing.T) {
 	}
 	testCases := []struct {
 		ipv6   		     bool
-		expect500      bool
 		expect400      bool
-		expect422      bool
 		trusted        bool
 		remote         string
 		desc           string
@@ -147,25 +146,13 @@ func TestNew(t *testing.T) {
 
 			handler.ServeHTTP(recorder, req)
 
-			if recorder.Result().StatusCode == 500 {
-				if test.expect500 == true {
-					return
-				}
-				t.Errorf("invalid response: 500")
-				return
-			}
-			if recorder.Result().StatusCode == 422 {
-				if test.expect422 == true {
-					return
-				}
-				t.Errorf("invalid response: 422")
-				return
-			}
 			if recorder.Result().StatusCode == 400 {
 				if test.expect400 == true {
 					return
 				}
-				t.Errorf("invalid response: 400")
+			}
+			if recorder.Result().StatusCode != 200 {
+				t.Errorf("invalid response: " + strconv.Itoa(recorder.Result().StatusCode))
 				return
 			}
 
