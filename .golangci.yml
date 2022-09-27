@@ -29,6 +29,10 @@ linters-settings:
 linters:
   enable-all: true
   disable:
+    - deadcode # deprecated
+    - varcheck # deprecated
+    - structcheck # deprecated
+    - nosnakecase # deprecated
     - interfacer # deprecated
     - maligned # deprecated
     - scopelint # deprecated

@@ -4,8 +4,8 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
-  "strconv"
 
 	plugin "github.com/BetterCorp/cloudflarewarp"
 )
@@ -21,7 +21,7 @@ func TestNew(t *testing.T) {
 		t.Fatal(err)
 	}
 	testCases := []struct {
-		ipv6					 bool
+		ipv6           bool
 		expect400      bool
 		trusted        bool
 		remote         string
@@ -69,7 +69,7 @@ func TestNew(t *testing.T) {
 		},
 		{
 			remote:         "1001:3984:3989::1",
-			ipv6:						true,
+			ipv6:           true,
 			desc:           "not trust ip6/6",
 			cfConnectingIP: "1001:3984:3989::1",
 			cfVisitor:      "",
@@ -79,7 +79,7 @@ func TestNew(t *testing.T) {
 		},
 		{
 			remote:         "1001:3984:3989::1",
-			ipv6:						true,
+			ipv6:           true,
 			desc:           "not trust ip6/4",
 			cfConnectingIP: "10.0.1.20",
 			cfVisitor:      "",
@@ -146,12 +146,12 @@ func TestNew(t *testing.T) {
 
 			handler.ServeHTTP(recorder, req)
 
-			if recorder.Result().StatusCode == 400 {
+			if recorder.Result().StatusCode == http.StatusBadRequest {
 				if test.expect400 == true {
 					return
 				}
 			}
-			if recorder.Result().StatusCode != 200 {
+			if recorder.Result().StatusCode != http.StatusOK {
 				t.Errorf("invalid response: " + strconv.Itoa(recorder.Result().StatusCode))
 				return
 			}
