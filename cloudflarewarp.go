@@ -17,6 +17,9 @@ const (
 	xForwardProto  = "X-Forwarded-Proto"
 	cfConnectingIP = "CF-Connecting-IP"
 	cfVisitor      = "CF-Visitor"
+	errorFatal     = 500
+	errorUnprocess = 422
+	errorClient    = 400
 )
 
 // Config the plugin configuration.
@@ -88,15 +91,15 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 func (r *RealIPOverWriter) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	trustResult := r.trust(req.RemoteAddr)
 	if trustResult.isFatal {
-		http.Error(rw, "Unknown source", 500)
+		http.Error(rw, "Unknown source", errorFatal)
 		return
 	}
 	if trustResult.isError {
-		http.Error(rw, "Unknown source", 400)
+		http.Error(rw, "Unknown source", errorClient)
 		return
 	}
 	if trustResult.directIP == "" {
-		http.Error(rw, "Unknown source", 422)
+		http.Error(rw, "Unknown source", errorUnprocess)
 		return
 	}
 	if trustResult.trusted {
