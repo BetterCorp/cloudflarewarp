@@ -8,6 +8,4 @@ summary: get real IP and proto from Cloudflare Proxy/Tunnel
 testData:
   disableDefault: false
   trustip:
-    - 10.0.0.0/8
-    - 172.0.0.0/8
-    - 192.0.0.0/8
+    - 2400:cb00::/32
