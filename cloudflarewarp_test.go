@@ -21,7 +21,7 @@ func TestNew(t *testing.T) {
 		t.Fatal(err)
 	}
 	testCases := []struct {
-		ipv6   		     bool
+		ipv6					 bool
 		expect400      bool
 		trusted        bool
 		remote         string
