@@ -27,6 +27,7 @@ type Config struct {
 
 // TrustResult for Trust IP test result.
 type TrustResult struct {
+	isFatal  bool
 	isError  bool
 	trusted  bool
 	directIP string
@@ -86,8 +87,16 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 
 func (r *RealIPOverWriter) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	trustResult := r.trust(req.RemoteAddr)
-	if trustResult.directIP == "" || trustResult.isError {
+	if trustResult.isFatal {
 		http.Error(rw, "Unknown source", 500)
+		return
+	}
+	if trustResult.isError {
+		http.Error(rw, "Unknown source", 400)
+		return
+	}
+	if trustResult.directIP == "" {
+		http.Error(rw, "Unknown source", 422)
 		return
 	}
 	if trustResult.trusted {
@@ -118,6 +127,7 @@ func (r *RealIPOverWriter) trust(s string) *TrustResult {
 	temp, _, err := net.SplitHostPort(s)
 	if err != nil {
 		return &TrustResult{
+			isFatal:  true,
 			isError:  true,
 			trusted:  false,
 			directIP: "",
@@ -126,6 +136,7 @@ func (r *RealIPOverWriter) trust(s string) *TrustResult {
 	ip := net.ParseIP(temp)
 	if ip == nil {
 		return &TrustResult{
+			isFatal:  false,
 			isError:  true,
 			trusted:  false,
 			directIP: "",
@@ -134,6 +145,7 @@ func (r *RealIPOverWriter) trust(s string) *TrustResult {
 	for _, network := range r.TrustIP {
 		if network.Contains(ip) {
 			return &TrustResult{
+				isFatal:  false,
 				isError:  false,
 				trusted:  true,
 				directIP: ip.String(),
@@ -141,6 +153,7 @@ func (r *RealIPOverWriter) trust(s string) *TrustResult {
 		}
 	}
 	return &TrustResult{
+		isFatal:  false,
 		isError:  false,
 		trusted:  false,
 		directIP: ip.String(),
