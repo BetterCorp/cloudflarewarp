@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
 
 	plugin "github.com/BetterCorp/cloudflarewarp"
@@ -20,7 +21,8 @@ func TestNew(t *testing.T) {
 		t.Fatal(err)
 	}
 	testCases := []struct {
-		expect500      bool
+		ipv6           bool
+		expect400      bool
 		trusted        bool
 		remote         string
 		desc           string
@@ -57,13 +59,42 @@ func TestNew(t *testing.T) {
 			trusted:        false,
 		},
 		{
+			remote:         "10.0.1.20",
+			desc:           "not trust ip4/6",
+			cfConnectingIP: "1001:3984:3989::1",
+			cfVisitor:      "",
+			expected:       "",
+			expectedScheme: "",
+			trusted:        false,
+		},
+		{
+			remote:         "1001:3984:3989::1",
+			ipv6:           true,
+			desc:           "not trust ip6/6",
+			cfConnectingIP: "1001:3984:3989::1",
+			cfVisitor:      "",
+			expected:       "",
+			expectedScheme: "",
+			trusted:        false,
+		},
+		{
+			remote:         "1001:3984:3989::1",
+			ipv6:           true,
+			desc:           "not trust ip6/4",
+			cfConnectingIP: "10.0.1.20",
+			cfVisitor:      "",
+			expected:       "",
+			expectedScheme: "",
+			trusted:        false,
+		},
+		{
 			remote:         "10.0.2",
 			desc:           "wrong IP format",
 			cfConnectingIP: "10.0.0.1",
 			cfVisitor:      "",
 			expected:       "",
 			expectedScheme: "",
-			expect500:      true,
+			expect400:      true,
 			trusted:        false,
 		},
 		{
@@ -73,7 +104,7 @@ func TestNew(t *testing.T) {
 			cfVisitor:      "",
 			expected:       "",
 			expectedScheme: "",
-			expect500:      true,
+			expect400:      true,
 			trusted:        false,
 		},
 		{
@@ -104,18 +135,24 @@ func TestNew(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			req.RemoteAddr = test.remote + ":36001"
+			if test.ipv6 == true {
+				req.RemoteAddr = "[" + test.remote + "]:36001"
+			} else {
+				req.RemoteAddr = test.remote + ":36001"
+			}
 			req.Header.Set("X-Real-Ip", test.remote)
 			req.Header.Set("Cf-Connecting-IP", test.cfConnectingIP)
 			req.Header.Set("Cf-Visitor", test.cfVisitor)
 
 			handler.ServeHTTP(recorder, req)
 
-			if recorder.Result().StatusCode == 500 {
-				if test.expect500 == true {
+			if recorder.Result().StatusCode == http.StatusBadRequest {
+				if test.expect400 == true {
 					return
 				}
-				t.Errorf("invalid response: 500")
+			}
+			if recorder.Result().StatusCode != http.StatusOK {
+				t.Errorf("invalid response: " + strconv.Itoa(recorder.Result().StatusCode))
 				return
 			}
 

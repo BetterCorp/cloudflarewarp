@@ -1,9 +1,11 @@
 SUCCESS_CONFIG_FILE="./logs-success-${1}/output.log"
 FAIL_CONFIG_FILE="./logs-fail-${1}/output.log"
+INVALID_CONFIG_FILE="./logs-invalid-${1}/output.log"
 
 echo "RUNNING TESTS FOR ${1}"
 echo " - Succ $SUCCESS_CONFIG_FILE"
 echo " - Fail $FAIL_CONFIG_FILE"
+echo " - Inva $INVALID_CONFIG_FILE"
 
 sleep 1s
 
@@ -26,6 +28,10 @@ fi
 
 if ! grep -q "X-Is-Trusted: no" $FAIL_CONFIG_FILE; then
   echo "'X-Is-Trusted: no' header was not added to the invalid request ($FAIL_CONFIG_FILE)"
+  exit 5
+fi
+if ! grep -q "X-Is-Trusted: no" $INVALID_CONFIG_FILE; then
+  echo "'X-Is-Trusted: no' header was not added to the invalid request ($INVALID_CONFIG_FILE)"
   exit 5
 fi
 #if ! grep -q "X-Forwarded-For: 10.0.0.2" $FAIL_CONFIG_FILE; then
