@@ -111,9 +111,11 @@ func (r *RealIPOverWriter) ServeHTTP(rw http.ResponseWriter, req *http.Request) 
 			}
 			req.Header.Set(xForwardProto, cfVisitorValue.Scheme)
 		}
-		req.Header.Set(xCfTrusted, "yes")
-		req.Header.Set(xForwardFor, req.Header.Get(cfConnectingIP))
-		req.Header.Set(xRealIP, req.Header.Get(cfConnectingIP))
+		if req.Header.Get(cfConnectingIP) != ""{
+			req.Header.Set(xCfTrusted, "yes")
+			req.Header.Set(xForwardFor, req.Header.Get(cfConnectingIP))
+			req.Header.Set(xRealIP, req.Header.Get(cfConnectingIP))
+		}
 	} else {
 		req.Header.Set(xCfTrusted, "no")
 		req.Header.Set(xRealIP, trustResult.directIP)
