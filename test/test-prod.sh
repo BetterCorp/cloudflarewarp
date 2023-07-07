@@ -17,8 +17,9 @@ if [ "${1}" = "stack" ]; then
   sleep 5s
 fi
 
-docker pull traefik/whoami:v1.8.1
-docker pull traefik:2.8
+# TODO: this should pull a version from a variable allowing for specific versions to be tested against over time...
+docker pull traefik/whoami:latest
+docker pull traefik:latest
 
 sleep 1s
 
