@@ -38,7 +38,7 @@ experimental:
   plugins:
     cloudflarewarp:
       modulename: github.com/BetterCorp/cloudflarewarp
-      version: v1.3.0
+      version: v1.4.0
 ```
 
 ### Plugin configuration
@@ -82,3 +82,7 @@ We have written the following tests in this repo:
 - Live implementation tests (spin up traefik with the plugin definition as it would be for you, and run the same tests again)
 
 These tests allow us to make sure the plugin is always functional with Traefik and Traefik version updates.
+
+# Standing up the crowdsec bouncer plugin in traefik
+
+See the following blog post for a walkthrough on how to stand up the crowdsec bouncer plugin in traefik: [https://bpto.li/H0JY11Zb](https://bpto.li/H0JY11Zb)

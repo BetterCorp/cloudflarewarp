@@ -1,6 +1,6 @@
 module github.com/BetterCorp/cloudflarewarp
 
-go 1.18
+go 1.23.0
 
 retract (
 	v1.0.0 // No longer supported - removed from releases re 1.2.0
