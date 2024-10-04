@@ -99,6 +99,11 @@ func (r *RealIPOverWriter) ServeHTTP(rw http.ResponseWriter, req *http.Request) 
 		http.Error(rw, "Unknown source", http.StatusUnprocessableEntity)
 		return
 	}
+	if req.Header.Get(cfConnectingIP) == "" && trustResult.trusted {
+		req.Header.Set(xCfTrusted, "yes")
+		r.next.ServeHTTP(rw, req)
+		return
+	}
 	if trustResult.trusted {
 		if req.Header.Get(cfVisitor) != "" {
 			var cfVisitorValue CFVisitorHeader
