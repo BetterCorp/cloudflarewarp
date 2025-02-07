@@ -1,3 +1,14 @@
+# ⚠️ Project No Longer Maintained ⚠️
+
+🚨 **This repository is no longer maintained or supported.** 🚨
+
+*We have moved to using [Caddy](https://caddyserver.com/?utm_source=github.com/BetterCorp/cloudflarewarp) for our needs.*
+
+*Thank you for your interest and support!*
+
+*If you wish to fork this project, it includes built-in testing tools. You can update the Traefik and Go versions to continue development.*
+
+
 # Real IP from Cloudflare Proxy/Tunnel
 
 [![Code Coverage](https://codecov.io/gh/BetterCorp/cloudflarewarp/branch/master/graph/badge.svg?token=QFGZS5QJSG)](https://codecov.io/gh/BetterCorp/cloudflarewarp)
